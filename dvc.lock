@@ -1,0 +1,14 @@
+schema: '2.0'
+stages:
+  train_and_predict:
+    cmd: python train_predict.py
+    deps:
+    - path: timeseries_data.csv
+      hash: md5
+      md5: 9d35076d4af6168da36ed5eed2135541
+      size: 4020
+    outs:
+    - path: predictions.csv
+      hash: md5
+      md5: 510e9bedaf57eb9a5728d018c029f82a
+      size: 107

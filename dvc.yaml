@@ -1,0 +1,7 @@
+stages:
+  train_and_predict:
+    cmd: python train_predict.py
+    deps:
+    - timeseries_data.csv
+    outs:
+    - predictions.csv

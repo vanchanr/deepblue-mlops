@@ -1,0 +1,53 @@
+name: DVC CI/CD
+
+on: push
+ 
+
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Install Dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install dvc[gs]  # This will install dvc along with the GCS support.
+
+
+    - name: Set up GCP credentials
+      env:
+        GCS_CREDENTIALS: ${{ secrets.GCS_CREDENTIALS }}
+      run: echo "$GCS_CREDENTIALS" > gcs-credentials.json
+
+
+
+    - name: Pull Data with DVC
+      run: |
+        export GOOGLE_APPLICATION_CREDENTIALS=gcs-credentials.json
+        dvc pull
+
+    - name: Reproduce DVC Pipeline
+      run: |
+        dvc repro
+        
+    - name: Display the content of dvc.lock
+      run: cat dvc.lock
+
+
+
+
+
+    # Add other necessary steps like testing, etc.
+    - name: Push Data with DVC to Remote
+      run: |
+        export GOOGLE_APPLICATION_CREDENTIALS=gcs-credentials.json
+        dvc push predictions.csv
+
